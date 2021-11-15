@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Seam Labs Task</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Main Activity -->
+    <string name="checkConnection">Check Your Connection</string>
+    <string name="internet_connection_failure">Internet Connection Failure</string>
+
+    <string name="for_more_details"><u>for More Details</u></string>
+
+</resources>
