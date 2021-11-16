@@ -3,19 +3,20 @@ package com.example.seamlabstask.ui
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
-import com.example.seamlabstask.R
-import com.example.seamlabstask.common.AppManager.articleItem
 import com.example.seamlabstask.databinding.FragmentDetailsBinding
+import com.example.seamlabstask.ui.viewmodel.HomeViewModel
 
 class DetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentDetailsBinding
+
+    private val vm: HomeViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,20 +34,20 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initView() {
-        binding.txtSourceName.text = articleItem.source!!.name.toString()
-        binding.txtArticleTitle.text = articleItem.title.toString()
+        binding.txtSourceName.text = vm.articleItem.source!!.name
+        binding.txtArticleTitle.text = vm.articleItem.title.toString()
 
         Glide.with(requireContext())
-            .load(articleItem.urlToImage)
+            .load(vm.articleItem.urlToImage)
             .into(binding.imgArticleNews)
 
-        binding.txtArticleDesc.text = articleItem.description.toString()
+        binding.txtArticleDesc.text = vm.articleItem.description.toString()
     }
 
     private fun setBtnListener() {
         binding.txtArticleUrl.setOnClickListener {
             val openURL = Intent(Intent.ACTION_VIEW)
-            openURL.data = Uri.parse(articleItem.url)
+            openURL.data = Uri.parse(vm.articleItem.url)
             startActivity(openURL)
         }
     }

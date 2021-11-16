@@ -8,14 +8,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.seamlabstask.MainActivity
 import com.example.seamlabstask.ProgressHandle
-import com.example.seamlabstask.common.AppManager.articleItem
 import com.example.seamlabstask.databinding.FragmentHomeBinding
 import com.example.seamlabstask.handleData.HandleError
 import com.example.seamlabstask.ui.adapter.NewsAdapter
@@ -26,13 +25,13 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentHomeBinding
 
-    private val vm: HomeViewModel by viewModels()
+    private val vm: HomeViewModel by activityViewModels()
 
     private lateinit var newsAdapter: NewsAdapter
 
     private val onArticleClickCallBack: (Position: Int, article: ArticlesItem) -> Unit =
         { _, article ->
-            articleItem = article
+            vm.articleItem = article
             findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToDetailsFragment())
         }
 
@@ -54,6 +53,7 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setBtnListener()
         subscribeData()
+        //subscribeMutiData()
     }
 
     private fun setBtnListener() {
@@ -77,23 +77,18 @@ class HomeFragment : Fragment() {
     }
 
     private fun subscribeData() {
-        vm.newsSourceLive.observe(viewLifecycleOwner, {
-            it.let {
-                if (it != null) {
-                    (requireActivity() as ProgressHandle).hideProgressBar()
-                    binding.recyclerViewNews.apply {
-                        layoutManager = LinearLayoutManager(requireContext())
-                        newsAdapter = NewsAdapter(it, onArticleClickCallBack)
-                        adapter = newsAdapter
-                        swipeToShare()
-                    }
-                }
-            }
-        })
-
         vm.handleData.observe(viewLifecycleOwner, {
             it.let {
                 when (it.getStatus()) {
+                    HandleError.DataStatus.SUCCESS -> {
+                        (requireActivity() as ProgressHandle).hideProgressBar()
+                        binding.recyclerViewNews.apply {
+                            layoutManager = LinearLayoutManager(requireContext())
+                            newsAdapter = NewsAdapter(it.getData(), onArticleClickCallBack)
+                            adapter = newsAdapter
+                            swipeToShare()
+                        }
+                    }
                     HandleError.DataStatus.ERROR -> {
                         (requireActivity() as MainActivity?)!!.hideProgressBar()
                         Toast.makeText(requireContext(), it.getError(), Toast.LENGTH_SHORT).show()
@@ -101,7 +96,8 @@ class HomeFragment : Fragment() {
                     HandleError.DataStatus.CONNECTIONERROR -> {
                         (requireActivity() as MainActivity?)!!.hideProgressBar()
                         Toast.makeText(
-                            requireContext(), it.getConnectionError(), Toast.LENGTH_SHORT).show()
+                            requireContext(), it.getConnectionError(), Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
@@ -111,8 +107,7 @@ class HomeFragment : Fragment() {
     private fun swipeToShare() {
         val itemSwipe = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
+                recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder,
                 target: RecyclerView.ViewHolder
             ): Boolean {
                 return false
@@ -132,9 +127,7 @@ class HomeFragment : Fragment() {
 
     fun shareNews(position: Int) {
         val intent = Intent(Intent.ACTION_SEND)
-        intent.putExtra(
-            Intent.EXTRA_TEXT, (getUrl(position))
-        )
+        intent.putExtra(Intent.EXTRA_TEXT, (getUrl(position)))
         intent.type = "text/plain"
         requireContext().startActivity(Intent.createChooser(intent, "Send To"))
     }

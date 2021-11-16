@@ -7,10 +7,9 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.example.seamlabstask.broadcast.ConnectivityReceiver
 import com.example.seamlabstask.databinding.ActivityMainBinding
+import com.example.seamlabstask.services.ConnectivityReceiver
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityReceiverListener,
     ProgressHandle {
@@ -41,7 +40,6 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
             supportFragmentManager.findFragmentById(R.id.fragment_container_main) as NavHostFragment
         navController = navHostFrag.navController
         navController.setGraph(R.navigation.nav_graph, intent.extras)
-        //navController.addOnDestinationChangedListener(this)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -64,8 +62,7 @@ class MainActivity : AppCompatActivity(), ConnectivityReceiver.ConnectivityRecei
 
     private fun initBroadcastReceiver() {
         registerReceiver(
-            ConnectivityReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
-        )
+            ConnectivityReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         ConnectivityReceiver.connectivityReceiverListener = this
     }
 

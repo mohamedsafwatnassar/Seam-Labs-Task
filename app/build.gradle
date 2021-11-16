@@ -36,6 +36,10 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    buildTypes.each {
+        it.buildConfigField 'String', 'baseUrl', baseUrl
+        it.buildConfigField 'String', 'apiKey', apiKey
+    }
 }
 
 dependencies {

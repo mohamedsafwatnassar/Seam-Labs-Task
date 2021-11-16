@@ -1,4 +1,4 @@
-package com.example.seamlabstask.broadcast
+package com.example.seamlabstask.services
 
 import android.content.BroadcastReceiver
 import android.content.Context
