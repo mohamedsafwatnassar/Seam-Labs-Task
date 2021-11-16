@@ -53,7 +53,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setBtnListener()
         subscribeData()
-        //subscribeMutiData()
     }
 
     private fun setBtnListener() {
